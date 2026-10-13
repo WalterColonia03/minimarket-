@@ -41,26 +41,11 @@ def logout_view(request):
     return render(request, "identity/logout_confirm.html")
 
 
-@roles_required(Role.Code.ADMIN)
-@require_GET
-def product_entry(request):
-    return render(request, "identity/protected_placeholder.html", {"operation": "Registrar producto"})
-
-
-@roles_required(Role.Code.WAREHOUSE)
-@require_GET
-def inventory_load(request):
-    return render(request, "identity/protected_placeholder.html", {"operation": "Carga inicial"})
-
-
-@roles_required(Role.Code.SELLER)
-@require_GET
-def cash_open(request):
-    return render(request, "identity/protected_placeholder.html", {"operation": "Abrir turno"})
-
-
 @roles_required(Role.Code.SELLER)
 @require_GET
 def sales_counter(request):
-    return render(request, "identity/protected_placeholder.html", {"operation": "Ventas"})
-
+    return render(
+        request,
+        "identity/protected_placeholder.html",
+        {"operation": "Ventas", "story": "HU-VEN-01b", "status": "Pendiente · Semana 2"},
+    )

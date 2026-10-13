@@ -1,6 +1,8 @@
 """Tests for the reset_demo_db management command (S1-DB-05)."""
 from __future__ import annotations
 
+from datetime import timedelta
+from decimal import Decimal
 from io import StringIO
 from unittest.mock import patch
 
@@ -8,9 +10,11 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from cash.models import CashRegister
-from catalog.models import Category
+from cash.models import CashRegister, CashShift
+from catalog.models import Category, Product
 from identity.models import Account, Role
+from inventory.models import InitialInventoryLoad, Lot
+from django.utils import timezone
 
 
 _SEED_ENV = {
@@ -55,6 +59,30 @@ class ResetDemoDbTests(TestCase):
         # Seed first, then add extra dirty rows.
         call_command("seed_pmv")
         extra_role = Role.objects.create(code="EXTRA", name="Extra Role")
+        category = Category.objects.get(name_normalized="productos enlatados")
+        warehouse = Account.objects.get(email_normalized="almacen.demo@pmv.invalid")
+        seller = Account.objects.get(email_normalized="vendedor.demo@pmv.invalid")
+        product = Product.objects.create(
+            category=category,
+            name="Dato temporal",
+            barcode="RESET-001",
+            sale_price=Decimal("5.00"),
+        )
+        load = InitialInventoryLoad.objects.create(product=product, responsible=warehouse)
+        Lot.objects.create(
+            product=product,
+            initial_load=load,
+            number="TEMP-01",
+            initial_quantity=2,
+            available_quantity=2,
+            unit_cost=Decimal("1.0000"),
+            expiration_date=timezone.localdate() + timedelta(days=30),
+        )
+        CashShift.objects.create(
+            cash_register=CashRegister.objects.get(code="CAJA-01"),
+            seller=seller,
+            opening_amount=Decimal("10.00"),
+        )
         self.assertEqual(Role.objects.count(), 4)
 
         output = StringIO()
@@ -64,6 +92,10 @@ class ResetDemoDbTests(TestCase):
         self.assertEqual(Account.objects.count(), 4)
         self.assertEqual(Category.objects.count(), 1)
         self.assertEqual(CashRegister.objects.count(), 1)
+        self.assertEqual(Product.objects.count(), 0)
+        self.assertEqual(InitialInventoryLoad.objects.count(), 0)
+        self.assertEqual(Lot.objects.count(), 0)
+        self.assertEqual(CashShift.objects.count(), 0)
         self.assertFalse(Role.objects.filter(code="EXTRA").exists())
 
     @patch.dict("os.environ", _SEED_ENV, clear=False)

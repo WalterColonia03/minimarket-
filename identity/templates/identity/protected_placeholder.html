@@ -1,6 +1,14 @@
 {% extends "identity/base.html" %}
-{% block content %}
-  <h2>{{ operation }}</h2>
-  <p>El módulo de negocio se integrará en la subtarea correspondiente.</p>
-{% endblock %}
 
+{% block title %}{{ operation }} · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="panel empty-state">
+  <span class="status status-pending">{{ status|default:"Pendiente · Semana 2" }}</span>
+  <div class="empty-icon" aria-hidden="true">◷</div>
+  <p class="eyebrow">{{ story|default:"Sprint 1" }}</p>
+  <h2>{{ operation }}</h2>
+  <p>Esta historia se mantiene fuera del corte actual para respetar la capacidad planificada. No se ha simulado ni adelantado su funcionalidad.</p>
+  <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
+</section>
+{% endblock %}

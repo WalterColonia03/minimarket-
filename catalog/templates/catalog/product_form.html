@@ -1,0 +1,49 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Registrar producto · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">HU-PROD-02 · Lista para revisión</p>
+    <h2>Registrar producto enlatado</h2>
+    <p class="lede">Crea la ficha comercial. El producto inicia con stock cero y no será vendible hasta confirmar su carga por lotes.</p>
+  </div>
+  <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
+</section>
+
+<div class="content-grid content-grid-aside">
+  <form method="post" class="panel form-panel" novalidate data-testid="product-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    {% for field in form %}
+      <div class="field{% if field.errors %} field-error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<div class="error-list" role="alert">{{ field.errors }}</div>{% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button class="button button-primary" type="submit" data-testid="product-submit">Registrar producto</button>
+      <a class="button button-ghost" href="{% url 'dashboard' %}">Cancelar</a>
+    </div>
+  </form>
+
+  <aside class="panel info-panel" aria-label="Condiciones del registro">
+    <span class="status status-zero">Stock inicial 0</span>
+    <h3>Control por lote</h3>
+    <p>En R1-PMV todos los productos enlatados exigen fecha de vencimiento. La fecha, cantidad y costo se registran después en inventario.</p>
+    <dl class="summary-list">
+      <div><dt>Unidad</dt><dd>UND</dd></div>
+      <div><dt>Precio</dt><dd>Incluye IGV</dd></div>
+      <div><dt>Stock mínimo</dt><dd>10 por defecto</dd></div>
+      <div><dt>Vendible al crear</dt><dd>No</dd></div>
+    </dl>
+  </aside>
+</div>
+{% endblock %}

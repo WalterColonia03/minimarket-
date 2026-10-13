@@ -1,0 +1,64 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Carga inicial · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">HU-INV-01a · En revisión técnica</p>
+    <h2>Carga inicial por lotes</h2>
+    <p class="lede">Confirma una sola entrada inicial. Si una fila es inválida, no se guardará ningún lote.</p>
+  </div>
+  <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
+</section>
+
+<form method="post" class="stack" novalidate data-testid="inventory-load-form">
+  {% csrf_token %}
+  <section class="panel form-panel">
+    <div class="section-heading">
+      <div><span class="step">1</span><h3>Producto</h3></div>
+      <span class="status status-review">Revisión</span>
+    </div>
+    {% if product_form.non_field_errors %}
+      <div class="alert alert-error" role="alert">{{ product_form.non_field_errors }}</div>
+    {% endif %}
+    <div class="field{% if product_form.product.errors %} field-error{% endif %}">
+      <label for="{{ product_form.product.id_for_label }}">{{ product_form.product.label }}</label>
+      {{ product_form.product }}
+      {% if product_form.product.errors %}<div class="error-list" role="alert">{{ product_form.product.errors }}</div>{% endif %}
+      <p class="help">Solo aparecen productos activos que todavía no tienen carga inicial.</p>
+    </div>
+  </section>
+
+  <section class="panel form-panel">
+    <div class="section-heading">
+      <div><span class="step">2</span><h3>Lotes recibidos</h3></div>
+      <span class="muted">Complete una o más filas</span>
+    </div>
+    {{ lot_formset.management_form }}
+    {% if lot_formset.non_form_errors %}
+      <div class="alert alert-error" role="alert">{{ lot_formset.non_form_errors }}</div>
+    {% endif %}
+    <div class="lot-grid" role="group" aria-label="Lotes de la carga inicial">
+      {% for lot_form in lot_formset %}
+        <fieldset class="lot-card">
+          <legend>Lote {{ forloop.counter }}</legend>
+          {% for hidden in lot_form.hidden_fields %}{{ hidden }}{% endfor %}
+          {% for field in lot_form.visible_fields %}
+            <div class="field{% if field.errors %} field-error{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="error-list" role="alert">{{ field.errors }}</div>{% endif %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="form-actions sticky-actions">
+    <button class="button button-primary" type="submit">Confirmar carga completa</button>
+    <a class="button button-ghost" href="{% url 'dashboard' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

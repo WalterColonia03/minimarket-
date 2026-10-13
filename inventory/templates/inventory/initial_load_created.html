@@ -1,0 +1,45 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Carga confirmada · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Carga confirmada</p>
+    <h2>{{ load.product.name }}</h2>
+    <p class="lede">La carga y todos sus lotes se guardaron en una sola operación.</p>
+  </div>
+  <span class="status status-review">En revisión técnica</span>
+</section>
+
+<section class="panel" data-testid="inventory-load-created">
+  <dl class="summary-list summary-list-wide">
+    <div><dt>Responsable</dt><dd>{{ load.responsible.display_name }}</dd></div>
+    <div><dt>Confirmado</dt><dd>{{ load.confirmed_at|date:"d/m/Y H:i" }}</dd></div>
+    <div><dt>Stock físico</dt><dd>{{ load.product.physical_stock }} UND</dd></div>
+    <div><dt>Costo promedio</dt><dd>S/ {{ load.product.average_cost|floatformat:4 }}</dd></div>
+  </dl>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Lote</th><th>Cantidad</th><th>Costo unitario</th><th>Vencimiento</th></tr></thead>
+      <tbody>
+        {% for lot in load.lots.all %}
+          <tr>
+            <td>{{ lot.number_normalized }}</td>
+            <td>{{ lot.available_quantity }} UND</td>
+            <td>S/ {{ lot.unit_cost|floatformat:4 }}</td>
+            <td>{{ lot.expiration_date|date:"d/m/Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info">Pendiente antes de marcar la HU como hecha: prueba concurrente en PostgreSQL y revisión independiente.</div>
+  <div class="form-actions">
+    <a class="button button-primary" href="{% url 'inventory-load' %}">Cargar otro producto</a>
+    <a class="button button-secondary" href="{% url 'dashboard' %}">Ir al inicio</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Turno abierto · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="success-panel panel" data-testid="cash-shift-opened">
+  <div class="success-icon" aria-hidden="true">✓</div>
+  <p class="eyebrow">Apertura registrada</p>
+  <h2>{{ shift.cash_register.code }} está abierta</h2>
+  <p class="lede">El turno quedó ligado a tu cuenta. La preparación y el cobro de ventas pertenecen a la segunda semana.</p>
+
+  <dl class="summary-list summary-list-wide">
+    <div><dt>Vendedor</dt><dd>{{ shift.seller.display_name }}</dd></div>
+    <div><dt>Monto inicial</dt><dd>S/ {{ shift.opening_amount|floatformat:2 }}</dd></div>
+    <div><dt>Apertura (Lima)</dt><dd>{{ shift.opened_at|date:"d/m/Y H:i" }}</dd></div>
+    <div><dt>Estado</dt><dd><span class="status status-progress">Abierto</span></dd></div>
+  </dl>
+
+  <div class="alert alert-info">HU-CAJA-01 continúa En progreso hasta completar concurrencia PostgreSQL, QA manual y revisión.</div>
+  <div class="form-actions">
+    <a class="button button-primary" href="{% url 'dashboard' %}">Volver al inicio</a>
+  </div>
+</section>
+{% endblock %}

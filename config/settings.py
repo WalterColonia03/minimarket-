@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "identity",
     "catalog",
+    "inventory",
     "cash",
     "app_platform",
 ]

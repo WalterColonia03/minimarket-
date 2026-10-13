@@ -1,11 +1,42 @@
 {% extends "identity/base.html" %}
+
+{% block title %}Ingresar · R1-PMV{% endblock %}
+
 {% block content %}
-  <h2>Ingresar</h2>
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <p>{{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}</p>
-    <p>{{ form.password.label_tag }} {{ form.password }} {{ form.password.errors }}</p>
-    <button type="submit">Ingresar</button>
-  </form>
+<div class="login-layout">
+  <section class="login-intro" aria-labelledby="login-title">
+    <p class="eyebrow">Control operativo</p>
+    <h1 id="login-title">Todo lo esencial de la bodega, en un solo lugar.</h1>
+    <p>Ingresa con tu cuenta de trabajo. El sistema mostrará únicamente las operaciones autorizadas para tu rol.</p>
+    <ul class="feature-list" aria-label="Características de acceso">
+      <li><span aria-hidden="true">✓</span> Sesión protegida en el servidor</li>
+      <li><span aria-hidden="true">✓</span> Acceso separado por rol</li>
+      <li><span aria-hidden="true">✓</span> Datos ficticios para demostración</li>
+    </ul>
+  </section>
+
+  <section class="panel login-card" aria-labelledby="form-title">
+    <p class="eyebrow">HU-AUTH-01</p>
+    <h2 id="form-title">Bienvenido</h2>
+    <p class="muted">Use las credenciales ficticias entregadas por el responsable del entorno.</p>
+    <form method="post" novalidate data-testid="login-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" role="alert" data-testid="login-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <div class="field{% if form.email.errors %} field-error{% endif %}">
+        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="error-list" role="alert">{{ form.email.errors }}</div>{% endif %}
+      </div>
+      <div class="field{% if form.password.errors %} field-error{% endif %}">
+        <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+        {{ form.password }}
+        {% if form.password.errors %}<div class="error-list" role="alert">{{ form.password.errors }}</div>{% endif %}
+      </div>
+      <button class="button button-primary button-block" type="submit">Ingresar de forma segura</button>
+    </form>
+    <p class="security-note"><span aria-hidden="true">●</span> Nunca mostraremos qué dato de acceso fue incorrecto.</p>
+  </section>
+</div>
 {% endblock %}

@@ -1,54 +1,67 @@
 # R1-PMV
 
-Monolito modular para el recorrido interno de una bodega: autenticación, catálogo, inventario por lotes, caja, ventas y constancias. Esta primera base entrega configuración segura, identidad/autorización y semillas; los casos de negocio se integran por sus subtareas.
+Monolito Django para el recorrido interno de una bodega. Este corte reproduce la capacidad planificada de la primera semana: autenticación y registro de producto están funcionales; carga inicial de inventario y apertura de caja quedan en validación; ventas, cobro, constancia, cierre y logout integrado con borradores permanecen para la segunda semana.
+
+## Alcance de este corte
+
+| Historia | Estado local | Resultado disponible |
+|---|---|---|
+| `HU-AUTH-01` | Lista para revisión externa | Login seguro, sesión rotada, navegación y autorización por rol |
+| `HU-PROD-02` | Lista para revisión externa | Alta de producto enlatado, validaciones, stock cero y permisos |
+| `HU-INV-01a` | En revisión técnica | Carga multilot atómica, costo promedio y pruebas locales; falta carrera PostgreSQL/revisión |
+| `HU-CAJA-01` | En progreso | Apertura ligada al vendedor y restricción de turno abierto; falta carrera PostgreSQL/revisión |
+| `HU-AUTH-03`, `HU-VEN-01b`, `HU-VEN-01c`, `HU-VEN-02a`, `HU-CAJA-02` | Pendiente · semana 2 | No se simula funcionalidad fuera del corte |
+
+Los estados son evidencia local; este repositorio no modifica por sí mismo Jira ni el remoto de GitHub.
 
 ## Requisitos
 
-- Python 3.13 para la imagen de demostración; Python 3.12 funciona para la verificación local de esta base.
-- Docker Compose y PostgreSQL 17 para ejecutar la topología de demostración.
+- Python 3.12 o 3.13.
+- Docker Compose y PostgreSQL 17 para las verificaciones de bloqueo y concurrencia.
 
-## Arranque local sin secretos reales
+## Arranque local
 
-1. Cree su `.env` privado desde `.env.example` y genere un `DJANGO_SECRET_KEY` local. El proyecto lo carga sin sobrescribir variables definidas por el sistema. No suba ese archivo.
-2. Para las verificaciones locales, puede dejar `DATABASE_URL` vacío para usar SQLite. Exporte una clave solo en la sesión actual de PowerShell:
+1. Copie `.env.example` a `.env`, genere un `DJANGO_SECRET_KEY` local y deje `DATABASE_URL` vacío si usará SQLite.
+2. Aplique las migraciones:
 
    ```powershell
    $env:DJANGO_SECRET_KEY = [guid]::NewGuid().ToString('N')
    .\.venv\Scripts\python.exe manage.py migrate
    ```
 
-3. Defina las tres variables `SEED_*_PASSWORD` solo en su sesión o `.env` privado y ejecute:
+3. Defina las tres contraseñas ficticias solo en su sesión y cargue los datos base:
 
    ```powershell
+   $env:SEED_ADMIN_PASSWORD = 'valor-local'
+   $env:SEED_WAREHOUSE_PASSWORD = 'valor-local'
+   $env:SEED_SELLER_PASSWORD = 'valor-local'
    .\.venv\Scripts\python.exe manage.py seed_pmv
    .\.venv\Scripts\python.exe manage.py runserver
    ```
 
-La salida del comando de semillas no muestra contraseñas. Las cuentas ficticias usan los correos `admin.demo@pmv.invalid`, `almacen.demo@pmv.invalid`, `vendedor.demo@pmv.invalid` e `inactiva.demo@pmv.invalid`.
+Las cuentas ficticias son `admin.demo@pmv.invalid`, `almacen.demo@pmv.invalid`, `vendedor.demo@pmv.invalid` e `inactiva.demo@pmv.invalid`. El comando nunca imprime sus contraseñas.
 
-## PostgreSQL y roles mínimos
+## Rutas del corte
 
-1. Complete en `.env` las credenciales de bootstrap, migración y aplicación, y ambas URLs PostgreSQL. No use valores de ejemplo como credenciales reales.
-2. Inicie PostgreSQL: `docker compose up -d db`.
-3. Aplique el esquema con el rol migrador: `docker compose --profile tools run --rm migrate`.
-4. Inicie la aplicación con el rol limitado: `docker compose up web`.
-
-`pmv_migrator` puede crear objetos de esquema. `pmv_app` solo recibe conexión, uso de esquema y los permisos DML/sequence que el migrador otorga por defecto; no debe ejecutar migraciones.
+- `/`: ingreso.
+- `/inicio/`: panel filtrado por rol.
+- `/productos/nuevo/`: registro exclusivo de `ADMIN`.
+- `/inventario/carga-inicial/`: carga exclusiva de `ALMACENERO`.
+- `/caja/abrir/`: apertura exclusiva de `VENDEDOR`.
+- `/ventas/`: aviso de alcance pendiente; no implementa venta.
 
 ## Verificación
 
 ```powershell
 $env:DJANGO_SECRET_KEY = 'test-only-key'
+$env:APP_ENV = 'test'
+.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
+.\.venv\Scripts\python.exe manage.py check
 .\.venv\Scripts\python.exe manage.py test
-.\.venv\Scripts\python.exe manage.py check --deploy
 ```
 
-El segundo comando reportará controles que exigen HTTPS si se corre en local; eso es esperado. En `APP_ENV=demo` o `production`, se activan HTTPS/HSTS y cookies seguras; `DJANGO_DEBUG=true` se rechaza al iniciar.
+SQLite cubre los casos funcionales deterministas. Las carreras de dos cargas y dos aperturas deben repetirse con conexiones separadas en PostgreSQL 17 antes de mover `HU-INV-01a` o `HU-CAJA-01` a terminada.
 
-## Límites actuales
+Para PostgreSQL, complete las variables de `.env`, inicie `docker compose up -d db`, ejecute `docker compose --profile tools run --rm migrate` y levante `docker compose up web`. El rol `pmv_migrator` aplica esquema; `pmv_app` conserva privilegios de ejecución limitados.
 
-- `HU-AUTH-01`: servicio de login, sesión de servidor y autorización por rol están implementados y probados.
-- `HU-AUTH-03`: invalidación de sesión está implementada; el descarte atómico de borrador se integrará cuando exista el módulo `sales` y su modelo de borrador.
-- Los enlaces protegidos de producto, inventario, caja y ventas son contratos de autorización; aún no contienen sus casos de negocio.
-
-Consulte [docs/seguridad.md](docs/seguridad.md) para las decisiones de seguridad y el traspaso para el equipo.
+Consulte [evidencias/CORTE_SEMANA_1_2026-10-13.md](evidencias/CORTE_SEMANA_1_2026-10-13.md) para la trazabilidad del corte y [docs/seguridad.md](docs/seguridad.md) para las decisiones de seguridad.

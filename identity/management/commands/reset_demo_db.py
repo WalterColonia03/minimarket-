@@ -17,9 +17,10 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 
-from cash.models import CashRegister
-from catalog.models import Category
+from cash.models import CashRegister, CashShift
+from catalog.models import Category, Product
 from identity.models import Account, Role
+from inventory.models import InitialInventoryLoad, Lot
 
 
 _ALLOWED_ENVS = {"local", "demo"}
@@ -58,6 +59,10 @@ class Command(BaseCommand):
         with transaction.atomic():
             # Delete in FK-safe order: dependents first.
             Session.objects.all().delete()
+            Lot.objects.all().delete()
+            InitialInventoryLoad.objects.all().delete()
+            CashShift.objects.all().delete()
+            Product.objects.all().delete()
             Account.objects.all().delete()
             Role.objects.all().delete()
             Category.objects.all().delete()
@@ -68,7 +73,11 @@ class Command(BaseCommand):
                 "roles": Role.objects.count(),
                 "accounts": Account.objects.count(),
                 "categories": Category.objects.count(),
+                "products": Product.objects.count(),
+                "initial_loads": InitialInventoryLoad.objects.count(),
+                "lots": Lot.objects.count(),
                 "cash_registers": CashRegister.objects.count(),
+                "cash_shifts": CashShift.objects.count(),
             }
             non_zero = {k: v for k, v in counts.items() if v != 0}
             if non_zero:

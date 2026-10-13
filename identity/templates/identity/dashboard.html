@@ -1,11 +1,67 @@
 {% extends "identity/base.html" %}
-{% block content %}
-  <h2>Inicio</h2>
-  {% if user.role.code == 'ADMIN' %}<a href="{% url 'product-entry' %}">Registrar producto</a>{% endif %}
-  {% if user.role.code == 'ALMACENERO' %}<a href="{% url 'inventory-load' %}">Carga inicial</a>{% endif %}
-  {% if user.role.code == 'VENDEDOR' %}
-    <a href="{% url 'cash-open' %}">Abrir turno</a>
-    <a href="{% url 'sales-counter' %}">Ventas</a>
-  {% endif %}
-{% endblock %}
 
+{% block title %}Inicio · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+  <div>
+    <p class="eyebrow">Panel {{ user.role.name }}</p>
+    <h1>Hola, {{ user.display_name }}</h1>
+    <p>Estas son las operaciones habilitadas para tu rol en el corte de la primera semana.</p>
+  </div>
+  <div class="date-card"><span>Sesión activa</span><strong>{{ user.role.code }}</strong></div>
+</section>
+
+<section aria-labelledby="operations-title">
+  <div class="section-title"><div><p class="eyebrow">Operaciones</p><h2 id="operations-title">¿Qué deseas hacer?</h2></div></div>
+  <div class="action-grid">
+    {% if user.role.code == 'ADMIN' %}
+      <a class="action-card action-card-live" href="{% url 'product-entry' %}" data-testid="product-entry-link">
+        <span class="card-icon card-icon-teal" aria-hidden="true">▦</span>
+        <span class="status status-ready">Lista para revisión</span>
+        <h3>Registrar producto</h3>
+        <p>Agrega un producto enlatado con precio, categoría y mínimo. Inicia con stock cero.</p>
+        <span class="card-link">Abrir registro <span aria-hidden="true">→</span></span>
+      </a>
+    {% endif %}
+
+    {% if user.role.code == 'ALMACENERO' %}
+      <a class="action-card action-card-live" href="{% url 'inventory-load' %}" data-testid="inventory-load-link">
+        <span class="card-icon card-icon-amber" aria-hidden="true">▤</span>
+        <span class="status status-review">En revisión</span>
+        <h3>Carga inicial</h3>
+        <p>Registra uno o varios lotes en una operación atómica y calcula el costo promedio.</p>
+        <span class="card-link">Abrir inventario <span aria-hidden="true">→</span></span>
+      </a>
+    {% endif %}
+
+    {% if user.role.code == 'VENDEDOR' %}
+      <a class="action-card action-card-live" href="{% url 'cash-open' %}" data-testid="cash-open-link">
+        <span class="card-icon card-icon-violet" aria-hidden="true">▣</span>
+        <span class="status status-progress">En progreso</span>
+        <h3>Abrir turno</h3>
+        <p>Declara el monto inicial y abre la caja única con tu usuario autenticado.</p>
+        <span class="card-link">Ir a caja <span aria-hidden="true">→</span></span>
+      </a>
+      <div class="action-card action-card-disabled" aria-disabled="true">
+        <span class="card-icon" aria-hidden="true">⌁</span>
+        <span class="status status-pending">Semana 2</span>
+        <h3>Ventas</h3>
+        <p>Preparación, cobro y constancia permanecen pendientes según el corte del Sprint.</p>
+        <span class="card-link muted">Pendiente</span>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="scope-panel panel" aria-labelledby="scope-title">
+  <div><p class="eyebrow">Corte del Sprint</p><h2 id="scope-title">Alcance controlado</h2></div>
+  <div class="scope-items">
+    <div><span class="scope-dot done"></span><strong>Login</strong><small>HU-AUTH-01</small></div>
+    <div><span class="scope-dot done"></span><strong>Producto</strong><small>HU-PROD-02</small></div>
+    <div><span class="scope-dot review"></span><strong>Inventario</strong><small>En revisión</small></div>
+    <div><span class="scope-dot progress"></span><strong>Apertura</strong><small>En progreso</small></div>
+    <div><span class="scope-dot pending"></span><strong>Resto</strong><small>Semana 2</small></div>
+  </div>
+</section>
+{% endblock %}

@@ -1,10 +1,17 @@
 {% extends "identity/base.html" %}
-{% block content %}
-  <h2>¿Deseas salir?</h2>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar salida</button>
-    <a href="{% url 'dashboard' %}">Cancelar</a>
-  </form>
-{% endblock %}
 
+{% block title %}Salir · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="panel empty-state">
+  <span class="status status-pending">Sesión</span>
+  <div class="empty-icon" aria-hidden="true">↪</div>
+  <h1>¿Deseas salir?</h1>
+  <p>Se cerrará esta sesión y volverás a la pantalla de ingreso. La historia completa de descarte de ventas se mantiene pendiente para la segunda semana.</p>
+  <form method="post" class="form-actions center-actions">
+    {% csrf_token %}
+    <button class="button button-primary" type="submit">Confirmar salida</button>
+    <a class="button button-secondary" href="{% url 'dashboard' %}">Cancelar</a>
+  </form>
+</section>
+{% endblock %}

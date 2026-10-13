@@ -1,0 +1,61 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Abrir caja · R1-PMV{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">HU-CAJA-01 · En progreso</p>
+    <h2>Apertura de caja</h2>
+    <p class="lede">Declara el efectivo inicial de la caja única antes de iniciar ventas.</p>
+  </div>
+  <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
+</section>
+
+{% if form.non_field_errors %}
+  <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+{% endif %}
+
+{% if current_shift %}
+  <section class="panel empty-state" data-testid="cash-already-open">
+    <span class="status status-progress">Turno abierto</span>
+    {% if owns_shift %}
+      <h3>Ya abriste {{ current_shift.cash_register.code }}</h3>
+      <p>Tu turno inició el {{ current_shift.opened_at|date:"d/m/Y" }} a las {{ current_shift.opened_at|date:"H:i" }} con S/ {{ current_shift.opening_amount|floatformat:2 }}.</p>
+      <a class="button button-primary" href="{% url 'cash-shift-opened' current_shift.pk %}">Ver mi turno</a>
+    {% else %}
+      <h3>La caja ya está en uso</h3>
+      <p>Solo puede existir un turno abierto. Cuando el turno actual se cierre, podrás iniciar uno nuevo.</p>
+    {% endif %}
+  </section>
+{% else %}
+  <div class="content-grid content-grid-aside">
+    <form method="post" class="panel form-panel" novalidate data-testid="cash-open-form">
+      {% csrf_token %}
+      <div class="field{% if form.opening_amount.errors %} field-error{% endif %}">
+        <label for="{{ form.opening_amount.id_for_label }}">{{ form.opening_amount.label }}</label>
+        <div class="money-input"><span>S/</span>{{ form.opening_amount }}</div>
+        <p class="help">Se acepta 0.00 o un monto positivo con máximo dos decimales.</p>
+        {% if form.opening_amount.errors %}<div class="error-list" role="alert">{{ form.opening_amount.errors }}</div>{% endif %}
+      </div>
+      <div class="form-actions">
+        <button class="button button-primary" type="submit">Abrir turno</button>
+        <a class="button button-ghost" href="{% url 'dashboard' %}">Cancelar</a>
+      </div>
+    </form>
+
+    <aside class="panel info-panel">
+      <span class="status status-progress">Integración inicial</span>
+      <h3>Datos del turno</h3>
+      <dl class="summary-list">
+        <div><dt>Caja</dt><dd>CAJA-01</dd></div>
+        <div><dt>Vendedor</dt><dd>{{ user.display_name }}</dd></div>
+        <div><dt>Estado</dt><dd>Abierto al confirmar</dd></div>
+      </dl>
+      <p class="help">El vendedor se toma de la sesión; no puede elegirse ni suplantarse desde el formulario.</p>
+    </aside>
+  </div>
+{% endif %}
+
+<div class="alert alert-info">Pendiente para cerrar la HU: carrera real de dos aperturas en PostgreSQL, caso manual y revisión independiente.</div>
+{% endblock %}

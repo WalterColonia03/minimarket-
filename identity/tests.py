@@ -38,6 +38,18 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.assertEqual(str(self.client.session["_auth_user_id"]), str(self.admin.pk))
         self.assertEqual(self.client.session["role_code"], Role.Code.ADMIN)
 
+    def test_login_rotates_an_existing_anonymous_session_key(self) -> None:
+        session = self.client.session
+        session["pre_auth_marker"] = "kept"
+        session.save()
+        previous_key = session.session_key
+
+        response = self.login(self.admin.email)
+
+        self.assertRedirects(response, reverse("dashboard"))
+        self.assertNotEqual(self.client.session.session_key, previous_key)
+        self.assertEqual(self.client.session["pre_auth_marker"], "kept")
+
     def test_password_uses_argon2_and_is_never_stored_in_plain_text(self) -> None:
         self.assertNotIn(self.password, self.admin.password)
         self.assertEqual(identify_hasher(self.admin.password).algorithm, "argon2")

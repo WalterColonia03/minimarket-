@@ -23,6 +23,20 @@
 
 **Total de estimaciones de los ítems con avance:** 24 h. Esto no significa que se hayan consumido 24 h.
 
+## Corte local al 2026-10-13
+
+La implementación avanzó después del registro histórico anterior. Este cuadro no inventa horas ni modifica Jira; resume únicamente el estado verificable del workspace.
+
+| Grupo | Jira | Resultado local verificable | Estado recomendado sin revisión externa | Tiempo real registrado |
+|---|---|---|---|---|
+| HU-AUTH-01 | SCRUM-305..310 | UI, servicio, sesión rotada, autorización y pruebas CA1–4 | En revisión | No registrado; no declarar horas retrospectivas |
+| HU-PROD-02 | SCRUM-316..320 | UI, servicio, constraints, stock cero y pruebas CA1–5 | En revisión | No registrado; no declarar horas retrospectivas |
+| HU-INV-01a | SCRUM-321..326 | UI, validación, transacción multilot y pruebas locales; concurrencia PostgreSQL pendiente | En progreso / revisión técnica | No registrado; no declarar horas retrospectivas |
+| HU-CAJA-01 | SCRUM-327..332 | UI, servicio e índice único parcial; carrera PostgreSQL pendiente | En progreso | No registrado; no declarar horas retrospectivas |
+| AUTH-03, VEN-01b, VEN-01c, VEN-02a, CAJA-02 | SCRUM-311..315, 333..355 | Sin recorrido funcional del alcance de semana 2 | Por hacer | 0 h declaradas desde este corte |
+
+Detalle y comandos: [CORTE_SEMANA_1_2026-10-13.md](CORTE_SEMANA_1_2026-10-13.md).
+
 ## Bitácora de sesiones reales
 
 Duplica esta plantilla por cada sesión y registra la misma entrada en Jira. No agregues sesiones retrospectivas sin una fuente verificable.
@@ -46,8 +60,10 @@ Responsable que registra:
 | Ítem | Para mover de estado con fundamento |
 |---|---|
 | SCRUM-297 | Instalar Docker/PostgreSQL 17, levantar Compose y conservar evidencia de los roles con privilegios mínimos. |
-| SCRUM-298 | Pruebas CSRF y de autorización sobre los servicios reales de producto, inventario, caja y ventas. |
+| SCRUM-298 | Revalidar CSRF/autorización en PostgreSQL y completar los servicios reales de ventas de la segunda semana. |
 | SCRUM-295 | Ejecutar las semillas dos veces contra PostgreSQL 17 y adjuntar conteos reproducibles. |
-| SCRUM-306/307/308 | Integrar los módulos reales, ejecutar CI y obtener revisión independiente. |
+| SCRUM-305..310 | Ejecutar QA manual de login, obtener revisión independiente y adjuntar PR/CI antes de marcar AUTH-01 Hecho. |
+| SCRUM-316..320 | Ejecutar QA manual de producto, obtener revisión independiente y adjuntar PR/CI antes de marcar PROD-02 Hecho. |
+| SCRUM-321..326 | Ejecutar la carrera de carga en PostgreSQL, QA manual y revisión independiente. |
+| SCRUM-327..332 | Ejecutar dos aperturas sincronizadas en PostgreSQL, QA manual y revisión independiente. |
 | SCRUM-312 | Implementar borrador/turno y demostrar descarte atómico, propiedad del turno y reingreso. |
-
