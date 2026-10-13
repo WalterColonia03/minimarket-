@@ -11,27 +11,86 @@
 </head>
 <body class="{% if not user.is_authenticated %}anonymous{% endif %}">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header class="site-header">
-    <div class="shell header-inner">
-      <a class="brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" aria-label="Minimarket, inicio">
-        <span class="brand-mark" aria-hidden="true">M</span>
-        <span><strong>Minimarket</strong><small>Gestión de bodega</small></span>
-      </a>
-      {% if user.is_authenticated %}
-        <nav class="session-nav" aria-label="Sesión">
-          <span class="user-chip"><span class="user-avatar" aria-hidden="true">{{ user.display_name|first|upper }}</span><span><strong>{{ user.display_name }}</strong><small>{{ user.role.name }}</small></span></span>
-          <a class="button button-ghost button-small" href="{% url 'logout' %}">Cerrar sesión</a>
-        </nav>
-      {% endif %}
-    </div>
-  </header>
+  {% if user.is_authenticated %}
+    <div class="app-shell">
+      <aside class="app-sidebar" aria-label="Navegaci&oacute;n principal">
+        <a class="sidebar-brand" href="{% url 'dashboard' %}" aria-label="Minimarket, inicio">
+          <span class="sidebar-brand-mark" aria-hidden="true">M</span>
+          <span><strong>Minimarket</strong><small>Gesti&oacute;n de bodega</small></span>
+        </a>
 
-  <main id="contenido" class="shell main-content" tabindex="-1">
+        <nav class="sidebar-nav">
+          <p class="sidebar-label">Operaciones</p>
+          <a class="nav-item{% if request.resolver_match.url_name == 'dashboard' %} is-active{% endif %}" href="{% url 'dashboard' %}">
+            <span class="nav-icon" aria-hidden="true">&#8962;</span><span>Inicio</span>
+          </a>
+          {% if user.role.code == 'ADMIN' %}
+            <a class="nav-item{% if request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %} is-active{% endif %}" href="{% url 'product-entry' %}">
+              <span class="nav-icon" aria-hidden="true">&#9638;</span><span>Productos</span>
+            </a>
+          {% endif %}
+          {% if user.role.code == 'ALMACENERO' %}
+            <a class="nav-item{% if request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %} is-active{% endif %}" href="{% url 'inventory-load' %}">
+              <span class="nav-icon" aria-hidden="true">&#9707;</span><span>Inventario</span>
+            </a>
+          {% endif %}
+          {% if user.role.code == 'VENDEDOR' %}
+            <a class="nav-item{% if request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %} is-active{% endif %}" href="{% url 'cash-open' %}">
+              <span class="nav-icon" aria-hidden="true">$</span><span>Mi caja</span>
+            </a>
+          {% endif %}
+        </nav>
+
+        <div class="sidebar-account">
+          <div class="sidebar-user">
+            <span class="user-avatar" aria-hidden="true">{{ user.display_name|first|upper }}</span>
+            <span><strong>{{ user.display_name }}</strong><small>{{ user.role.name }}</small></span>
+          </div>
+          <a class="sidebar-logout" href="{% url 'logout' %}"><span aria-hidden="true">&#8618;</span> Cerrar sesi&oacute;n</a>
+        </div>
+      </aside>
+
+      <div class="app-main">
+        <header class="app-topbar">
+          <div>
+            <p class="topbar-kicker">Minimarket</p>
+            <h1>
+              {% if request.resolver_match.url_name == 'dashboard' %}Inicio
+              {% elif request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %}Productos
+              {% elif request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %}Inventario
+              {% elif request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %}Mi caja
+              {% elif request.resolver_match.url_name == 'sales-counter' %}Ventas
+              {% elif request.resolver_match.url_name == 'logout' %}Cerrar sesi&oacute;n
+              {% else %}Minimarket{% endif %}
+            </h1>
+          </div>
+          <div class="topbar-user"><span>{{ user.display_name }}</span><span class="role-pill">{{ user.role.name }}</span></div>
+        </header>
+  {% else %}
+    <div class="public-shell">
+      <header class="site-header">
+        <div class="shell header-inner">
+          <a class="brand" href="{% url 'login' %}" aria-label="Minimarket, inicio">
+            <span class="brand-mark" aria-hidden="true">M</span>
+            <span><strong>Minimarket</strong><small>Gesti&oacute;n de bodega</small></span>
+          </a>
+        </div>
+      </header>
+  {% endif %}
+
+  <main id="contenido" class="{% if user.is_authenticated %}app-content{% else %}shell main-content{% endif %}" tabindex="-1">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="site-footer">
-    <div class="shell"><span>Minimarket · Gestión de bodega</span></div>
-  </footer>
+  {% if user.is_authenticated %}
+        <footer class="app-footer">Minimarket <span aria-hidden="true">&middot;</span> Gesti&oacute;n de bodega</footer>
+      </div>
+    </div>
+  {% else %}
+      <footer class="site-footer">
+        <div class="shell"><span>Minimarket <span aria-hidden="true">&middot;</span> Gesti&oacute;n de bodega</span></div>
+      </footer>
+    </div>
+  {% endif %}
 </body>
 </html>
