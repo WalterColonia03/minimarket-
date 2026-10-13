@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -63,9 +63,9 @@ def database_config(url: str | None, base_dir: str) -> dict[str, object]:
         raise ImproperlyConfigured("DATABASE_URL must include host and database name.")
     return {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": parsed.path.lstrip("/"),
-        "USER": parsed.username,
-        "PASSWORD": parsed.password,
+        "NAME": unquote(parsed.path.lstrip("/")),
+        "USER": unquote(parsed.username) if parsed.username else None,
+        "PASSWORD": unquote(parsed.password) if parsed.password else None,
         "HOST": parsed.hostname,
         "PORT": parsed.port or 5432,
         "CONN_MAX_AGE": 60,

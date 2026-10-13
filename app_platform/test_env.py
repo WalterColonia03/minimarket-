@@ -43,6 +43,15 @@ class EnvironmentConfigurationTests(SimpleTestCase):
         self.assertEqual(config["HOST"], "db")
         self.assertEqual(config["NAME"], "r1_pmv")
 
+    def test_postgresql_url_decodes_percent_encoded_credentials(self) -> None:
+        config = database_config(
+            "postgresql://app%40user:pass%3Aword%40db%23safe@db:5432/r1_pmv",
+            "/tmp/r1-pmv",
+        )
+
+        self.assertEqual(config["USER"], "app@user")
+        self.assertEqual(config["PASSWORD"], "pass:word@db#safe")
+
     def test_database_url_rejects_non_postgresql_scheme(self) -> None:
         with self.assertRaises(ImproperlyConfigured):
             database_config("mysql://user:password@db/r1_pmv", "/tmp/r1-pmv")
