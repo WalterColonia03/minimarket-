@@ -1,22 +1,22 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Carga confirmada · R1-PMV{% endblock %}
+{% block title %}Existencias confirmadas · Minimarket{% endblock %}
 
 {% block content %}
 <section class="page-heading">
   <div>
-    <p class="eyebrow">Carga confirmada</p>
+    <p class="eyebrow">Existencias confirmadas</p>
     <h2>{{ load.product.name }}</h2>
     <p class="lede">La carga y todos sus lotes se guardaron en una sola operación.</p>
   </div>
-  <span class="status status-review">En revisión técnica</span>
+  <span class="status status-ready">Existencias disponibles</span>
 </section>
 
 <section class="panel" data-testid="inventory-load-created">
   <dl class="summary-list summary-list-wide">
     <div><dt>Responsable</dt><dd>{{ load.responsible.display_name }}</dd></div>
-    <div><dt>Confirmado</dt><dd>{{ load.confirmed_at|date:"d/m/Y H:i" }}</dd></div>
-    <div><dt>Stock físico</dt><dd>{{ load.product.physical_stock }} UND</dd></div>
+    <div><dt>Confirmada</dt><dd>{{ load.confirmed_at|date:"d/m/Y H:i" }}</dd></div>
+    <div><dt>Existencias físicas</dt><dd>{{ load.product.physical_stock }} UND</dd></div>
     <div><dt>Costo promedio</dt><dd>S/ {{ load.product.average_cost|floatformat:4 }}</dd></div>
   </dl>
 
@@ -36,7 +36,6 @@
     </table>
   </div>
 
-  <div class="alert alert-info">Pendiente antes de marcar la HU como hecha: prueba concurrente en PostgreSQL y revisión independiente.</div>
   <div class="form-actions">
     <a class="button button-primary" href="{% url 'inventory-load' %}">Cargar otro producto</a>
     <a class="button button-secondary" href="{% url 'dashboard' %}">Ir al inicio</a>

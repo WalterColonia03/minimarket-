@@ -105,6 +105,26 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.assertNotContains(response, "Registrar producto")
         self.assertNotContains(response, "Carga inicial")
 
+    def test_dashboard_does_not_expose_planning_identifiers(self) -> None:
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, "Operaciones autorizadas")
+        for internal_label in ("HU-", "SCRUM", "Sprint", "corte"):
+            with self.subTest(internal_label=internal_label):
+                self.assertNotContains(response, internal_label)
+
+    def test_unavailable_sales_page_does_not_expose_planning_identifiers(self) -> None:
+        self.client.force_login(self.seller)
+
+        response = self.client.get(reverse("sales-counter"))
+
+        self.assertContains(response, "La preparación y el cobro de ventas aún no están disponibles.")
+        for internal_label in ("HU-", "SCRUM", "Sprint", "PostgreSQL", "segunda semana"):
+            with self.subTest(internal_label=internal_label):
+                self.assertNotContains(response, internal_label)
+
     def test_direct_operation_is_denied_without_mutating_data(self) -> None:
         self.client.force_login(self.warehouse)
         before = Account.objects.count()

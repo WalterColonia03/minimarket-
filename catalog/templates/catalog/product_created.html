@@ -1,21 +1,21 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Producto registrado · R1-PMV{% endblock %}
+{% block title %}Producto registrado · Minimarket{% endblock %}
 
 {% block content %}
 <section class="success-panel panel" data-testid="product-created">
   <div class="success-icon" aria-hidden="true">✓</div>
   <p class="eyebrow">Registro completado</p>
   <h2>{{ product.name }}</h2>
-  <p class="lede">La ficha fue creada correctamente. Aún no está disponible para venta.</p>
+  <p class="lede">El producto se creó con cero existencias y no está disponible para venta hasta recibir lotes.</p>
 
   <dl class="summary-list summary-list-wide">
     <div><dt>Código</dt><dd>{{ product.barcode }}</dd></div>
     <div><dt>Categoría</dt><dd>{{ product.category.name }}</dd></div>
-    <div><dt>Precio final</dt><dd>S/ {{ product.sale_price|floatformat:2 }}</dd></div>
-    <div><dt>Mínimo</dt><dd>{{ product.minimum_stock }} UND</dd></div>
-    <div><dt>Stock físico</dt><dd data-testid="physical-stock">{{ product.physical_stock }} UND</dd></div>
-    <div><dt>Estado de venta</dt><dd><span class="status status-pending">No vendible</span></dd></div>
+    <div><dt>Precio de venta</dt><dd>S/ {{ product.sale_price|floatformat:2 }}</dd></div>
+    <div><dt>Existencia mínima</dt><dd>{{ product.minimum_stock }} UND</dd></div>
+    <div><dt>Existencias físicas</dt><dd data-testid="physical-stock">{{ product.physical_stock }} UND</dd></div>
+    <div><dt>Disponibilidad</dt><dd><span class="status status-pending">No disponible para venta</span></dd></div>
   </dl>
 
   <div class="form-actions">

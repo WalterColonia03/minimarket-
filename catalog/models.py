@@ -94,7 +94,7 @@ class Product(models.Model):
         ):
             raise ValidationError({"category": "Seleccione la categoría activa Productos enlatados."})
         if not self.controls_expiration:
-            raise ValidationError({"controls_expiration": "El vencimiento por lote es obligatorio en R1-PMV."})
+            raise ValidationError({"controls_expiration": "El control de vencimiento es obligatorio para este producto."})
 
     def save(self, *args, **kwargs) -> None:
         self.name = self.name.strip()

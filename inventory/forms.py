@@ -10,7 +10,7 @@ from catalog.models import Product
 
 class InitialLoadProductForm(forms.Form):
     product = forms.ModelChoiceField(
-        label="Producto sin carga inicial",
+        label="Producto",
         queryset=Product.objects.none(),
         empty_label="Seleccione un producto",
     )

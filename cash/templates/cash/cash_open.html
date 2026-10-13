@@ -1,11 +1,11 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Abrir caja · R1-PMV{% endblock %}
+{% block title %}Apertura de caja · Minimarket{% endblock %}
 
 {% block content %}
 <section class="page-heading">
   <div>
-    <p class="eyebrow">HU-CAJA-01 · En progreso</p>
+    <p class="eyebrow">Ventas y caja</p>
     <h2>Apertura de caja</h2>
     <p class="lede">Declara el efectivo inicial de la caja única antes de iniciar ventas.</p>
   </div>
@@ -45,17 +45,16 @@
     </form>
 
     <aside class="panel info-panel">
-      <span class="status status-progress">Integración inicial</span>
+      <span class="status status-progress">Caja única</span>
       <h3>Datos del turno</h3>
       <dl class="summary-list">
         <div><dt>Caja</dt><dd>CAJA-01</dd></div>
         <div><dt>Vendedor</dt><dd>{{ user.display_name }}</dd></div>
         <div><dt>Estado</dt><dd>Abierto al confirmar</dd></div>
       </dl>
-      <p class="help">El vendedor se toma de la sesión; no puede elegirse ni suplantarse desde el formulario.</p>
+      <p class="help">El turno quedará ligado a la cuenta con la que iniciaste sesión.</p>
     </aside>
   </div>
 {% endif %}
 
-<div class="alert alert-info">Pendiente para cerrar la HU: carrera real de dos aperturas en PostgreSQL, caso manual y revisión independiente.</div>
 {% endblock %}

@@ -76,7 +76,7 @@ def confirm_initial_load(
         or not locked_product.category.is_active
         or locked_product.category.name_normalized != "productos enlatados"
     ):
-        raise ValidationError("El producto no está habilitado para la carga inicial de R1-PMV.")
+        raise ValidationError("El producto no está disponible para la carga inicial.")
     if InitialInventoryLoad.objects.filter(product=locked_product).exists():
         raise ValidationError("Este producto ya tiene una carga inicial confirmada.")
 

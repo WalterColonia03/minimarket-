@@ -1,13 +1,13 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Registrar producto · R1-PMV{% endblock %}
+{% block title %}Registrar producto · Minimarket{% endblock %}
 
 {% block content %}
 <section class="page-heading">
   <div>
-    <p class="eyebrow">HU-PROD-02 · Lista para revisión</p>
+    <p class="eyebrow">Productos y proveedores</p>
     <h2>Registrar producto enlatado</h2>
-    <p class="lede">Crea la ficha comercial. El producto inicia con stock cero y no será vendible hasta confirmar su carga por lotes.</p>
+    <p class="lede">Registra sus datos comerciales y el control de vencimiento. El producto inicia con cero existencias y no está disponible para venta hasta recibir lotes.</p>
   </div>
   <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
 </section>
@@ -35,14 +35,14 @@
   </form>
 
   <aside class="panel info-panel" aria-label="Condiciones del registro">
-    <span class="status status-zero">Stock inicial 0</span>
-    <h3>Control por lote</h3>
-    <p>En R1-PMV todos los productos enlatados exigen fecha de vencimiento. La fecha, cantidad y costo se registran después en inventario.</p>
+    <span class="status status-zero">Existencias iniciales: 0</span>
+    <h3>Control de vencimiento</h3>
+    <p>Los productos enlatados requieren fecha de vencimiento. La fecha, cantidad y costo se registran en las existencias por lotes.</p>
     <dl class="summary-list">
       <div><dt>Unidad</dt><dd>UND</dd></div>
       <div><dt>Precio</dt><dd>Incluye IGV</dd></div>
-      <div><dt>Stock mínimo</dt><dd>10 por defecto</dd></div>
-      <div><dt>Vendible al crear</dt><dd>No</dd></div>
+      <div><dt>Existencia mínima</dt><dd>10 por defecto</dd></div>
+      <div><dt>Disponible para venta</dt><dd>No</dd></div>
     </dl>
   </aside>
 </div>

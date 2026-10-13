@@ -1,16 +1,16 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Salir · R1-PMV{% endblock %}
+{% block title %}Cerrar sesión · Minimarket{% endblock %}
 
 {% block content %}
 <section class="panel empty-state">
-  <span class="status status-pending">Sesión</span>
+  <span class="status status-pending">Sesión de trabajo</span>
   <div class="empty-icon" aria-hidden="true">↪</div>
-  <h1>¿Deseas salir?</h1>
-  <p>Se cerrará esta sesión y volverás a la pantalla de ingreso. La historia completa de descarte de ventas se mantiene pendiente para la segunda semana.</p>
+  <h1>¿Deseas cerrar sesión?</h1>
+  <p>Volverás a la pantalla de ingreso y deberás autenticarte para continuar.</p>
   <form method="post" class="form-actions center-actions">
     {% csrf_token %}
-    <button class="button button-primary" type="submit">Confirmar salida</button>
+    <button class="button button-primary" type="submit">Cerrar sesión</button>
     <a class="button button-secondary" href="{% url 'dashboard' %}">Cancelar</a>
   </form>
 </section>

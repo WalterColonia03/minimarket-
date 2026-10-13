@@ -1,13 +1,13 @@
 {% extends "identity/base.html" %}
 
-{% block title %}Acceso denegado · R1-PMV{% endblock %}
+{% block title %}Acceso denegado · Minimarket{% endblock %}
 
 {% block content %}
 <section class="panel empty-state" data-testid="permission-denied">
   <span class="status status-pending">Acceso denegado</span>
   <div class="empty-icon" aria-hidden="true">⊘</div>
   <h1>No tienes permiso para esta operación</h1>
-  <p>Tu sesión continúa activa, pero el servidor bloqueó la solicitud porque no corresponde a tu rol.</p>
+  <p>Tu cuenta no tiene autorización para realizar esta operación.</p>
   <a class="button button-primary" href="{% url 'dashboard' %}">Volver a mi inicio</a>
 </section>
 {% endblock %}

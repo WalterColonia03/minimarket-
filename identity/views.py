@@ -47,5 +47,5 @@ def sales_counter(request):
     return render(
         request,
         "identity/protected_placeholder.html",
-        {"operation": "Ventas", "story": "HU-VEN-01b", "status": "Pendiente · Semana 2"},
+        {"operation": "Ventas"},
     )
