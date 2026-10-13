@@ -22,8 +22,6 @@
           <span class="user-chip"><span class="user-avatar" aria-hidden="true">{{ user.display_name|first|upper }}</span><span><strong>{{ user.display_name }}</strong><small>{{ user.role.name }}</small></span></span>
           <a class="button button-ghost button-small" href="{% url 'logout' %}">Cerrar sesión</a>
         </nav>
-      {% else %}
-        <span class="environment-pill">Datos ficticios controlados</span>
       {% endif %}
     </div>
   </header>

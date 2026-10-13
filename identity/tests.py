@@ -79,6 +79,21 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.assertTrue(accepted.cookies["sessionid"]["httponly"])
         self.assertEqual(accepted.cookies["sessionid"]["samesite"], "Lax")
 
+    def test_login_does_not_show_internal_access_copy(self) -> None:
+        response = self.client.get(reverse("login"))
+
+        self.assertContains(response, 'data-testid="login-form"')
+        for removed_copy in (
+            "Ingreso y personal",
+            "Ingresa con tu cuenta de trabajo",
+            "Accede a las opciones de tu puesto",
+            "Cuenta activa",
+            "Un rol de trabajo",
+            "Datos ficticios controlados",
+        ):
+            with self.subTest(removed_copy=removed_copy):
+                self.assertNotContains(response, removed_copy)
+
     def test_invalid_email_is_rejected_before_authentication(self) -> None:
         response = self.login("not-an-email")
 
