@@ -57,6 +57,10 @@ ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "identity.Account"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+# The application login is served from the public root, not Django's default
+# /accounts/login/ route.  Keep anonymous protected-route redirects inside the
+# published application.
+LOGIN_URL = "/"
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",

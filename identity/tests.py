@@ -112,6 +112,11 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Account.objects.count(), before)
 
+    def test_anonymous_protected_route_redirects_to_the_public_login(self) -> None:
+        response = self.client.get(reverse("product-entry"))
+
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('product-entry')}")
+
     def test_role_matrix_is_enforced_on_direct_urls(self) -> None:
         routes = {
             Role.Code.ADMIN: "product-entry",
