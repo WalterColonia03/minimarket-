@@ -1,0 +1,106 @@
+{% extends "identity/base.html" %}
+
+{% block title %}Preparar venta · Minimarket{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Mostrador</p>
+    <h2>Preparar venta</h2>
+    <p class="lede">Busca productos, indica las cantidades y revisa los importes antes del cobro.</p>
+  </div>
+  {% if current_shift %}
+    <span class="status status-ready">Turno abierto</span>
+  {% else %}
+    <span class="status status-review">Requiere turno abierto</span>
+  {% endif %}
+</section>
+
+{% if not current_shift %}
+  <section class="panel info-panel">
+    <h3>Abre tu turno para preparar una venta</h3>
+    <p class="muted">La venta se prepara únicamente con un turno de caja abierto a tu nombre.</p>
+    <div class="form-actions"><a class="button button-primary" href="{% url 'cash-open' %}">Ir a apertura de caja</a></div>
+  </section>
+{% else %}
+  <div class="sales-layout">
+    <section class="panel form-panel sales-search-panel">
+      <div class="section-heading"><div><span class="step" aria-hidden="true">1</span><h3>Buscar producto</h3></div></div>
+      <form method="get" class="search-form">
+        <div class="field">
+          {{ search_form.query.label_tag }}
+          {{ search_form.query }}
+        </div>
+        <button class="button button-secondary" type="submit">Buscar</button>
+      </form>
+
+      {% if query %}
+        {% if products %}
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Producto</th><th>Código</th><th>Disponible</th><th>Precio</th><th>Agregar</th></tr></thead>
+              <tbody>
+                {% for product in products %}
+                  <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.barcode }}</td>
+                    <td>{{ product.sellable_quantity }}</td>
+                    <td>S/ {{ product.sale_price|floatformat:2 }}</td>
+                    <td>
+                      <form method="post" class="line-add-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.pk }}">
+                        <label class="sr-only" for="quantity-{{ product.pk }}">Cantidad de {{ product.name }}</label>
+                        <input id="quantity-{{ product.pk }}" name="quantity" type="number" min="1" step="1" value="1" inputmode="numeric">
+                        <button class="button button-small button-primary" type="submit">Agregar</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="empty-table">No se encontraron productos con existencias vendibles.</p>
+        {% endif %}
+      {% else %}
+        <p class="empty-table">Escribe un nombre o código de barras para buscar.</p>
+      {% endif %}
+      {% if add_form.errors %}
+        <div class="alert alert-error"><ul class="errorlist">{% for field in add_form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}{% for error in add_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>
+      {% endif %}
+    </section>
+
+    <aside class="panel sales-summary-panel">
+      <div class="section-heading"><div><span class="step" aria-hidden="true">2</span><h3>Venta en preparación</h3></div></div>
+      {% if draft %}
+        <div class="draft-lines">
+          {% for line in draft.lines.all %}
+            <article class="draft-line">
+              <div><strong>{{ line.product.name }}</strong><span>S/ {{ line.unit_price|floatformat:2 }} por unidad</span></div>
+              <form class="draft-line-actions" method="post" action="{% url 'sales-line-update' line.pk %}">
+                {% csrf_token %}
+                <label class="sr-only" for="draft-quantity-{{ line.pk }}">Cantidad de {{ line.product.name }}</label>
+                <input id="draft-quantity-{{ line.pk }}" name="quantity" type="number" min="1" step="1" value="{{ line.quantity }}" inputmode="numeric">
+                <button class="button button-small button-secondary" type="submit">Actualizar</button>
+              </form>
+              <div class="draft-line-total"><span>{{ line.quantity }} und.</span><strong>S/ {{ line.amount|floatformat:2 }}</strong></div>
+              <form method="post" action="{% url 'sales-line-remove' line.pk %}">
+                {% csrf_token %}<button class="button-link" type="submit">Quitar</button>
+              </form>
+            </article>
+          {% endfor %}
+        </div>
+        <dl class="summary-list sale-totals">
+          <div><dt>Base imponible</dt><dd>S/ {{ totals.base|floatformat:2 }}</dd></div>
+          <div><dt>IGV</dt><dd>S/ {{ totals.igv|floatformat:2 }}</dd></div>
+          <div class="total-row"><dt>Total</dt><dd>S/ {{ totals.total|floatformat:2 }}</dd></div>
+        </dl>
+        <p class="help">Preparar la venta no descuenta existencias ni mueve efectivo.</p>
+      {% else %}
+        <p class="empty-table">Aún no agregaste productos a la venta.</p>
+      {% endif %}
+    </aside>
+  </div>
+{% endif %}
+{% endblock %}

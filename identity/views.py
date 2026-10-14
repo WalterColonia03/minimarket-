@@ -3,11 +3,10 @@ from __future__ import annotations
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_GET, require_http_methods, require_POST
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET, require_http_methods
 
-from .authorization import roles_required
 from .forms import LoginForm
-from .models import Role
 from .services import INVALID_CREDENTIALS_MESSAGE, authenticate_active_account, create_server_session
 
 
@@ -27,25 +26,21 @@ def login_view(request):
 
 @login_required
 @require_GET
+@never_cache
 def dashboard(request):
     return render(request, "identity/dashboard.html")
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
+@never_cache
 def logout_view(request):
-    """AUTH-03 draft disposal is added once the sales domain is integrated."""
+    from sales.services import active_draft_for_actor, discard_active_draft
+
+    draft = active_draft_for_actor(actor=request.user)
     if request.method == "POST":
+        if draft is not None:
+            discard_active_draft(actor=request.user)
         logout(request)
         return redirect("login")
-    return render(request, "identity/logout_confirm.html")
-
-
-@roles_required(Role.Code.SELLER)
-@require_GET
-def sales_counter(request):
-    return render(
-        request,
-        "identity/protected_placeholder.html",
-        {"operation": "Ventas"},
-    )
+    return render(request, "identity/logout_confirm.html", {"has_active_draft": draft is not None})

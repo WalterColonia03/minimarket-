@@ -38,6 +38,9 @@
             <a class="nav-item{% if request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %} is-active{% endif %}" href="{% url 'cash-open' %}">
               <span class="nav-icon" aria-hidden="true">$</span><span>Apertura de caja</span>
             </a>
+            <a class="nav-item{% if request.resolver_match.url_name == 'sales-draft' or request.resolver_match.url_name == 'sales-line-update' or request.resolver_match.url_name == 'sales-line-remove' %} is-active{% endif %}" href="{% url 'sales-draft' %}">
+              <span class="nav-icon" aria-hidden="true">&#9638;</span><span>Preparar venta</span>
+            </a>
           {% endif %}
         </nav>
 
@@ -59,7 +62,7 @@
               {% elif request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %}Registrar producto
               {% elif request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %}Existencias iniciales
               {% elif request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %}Apertura de caja
-              {% elif request.resolver_match.url_name == 'sales-counter' %}Ventas
+              {% elif request.resolver_match.url_name == 'sales-draft' or request.resolver_match.url_name == 'sales-line-update' or request.resolver_match.url_name == 'sales-line-remove' %}Preparar venta
               {% elif request.resolver_match.url_name == 'logout' %}Cerrar sesi&oacute;n
               {% else %}Minimarket{% endif %}
             </h1>
@@ -79,6 +82,11 @@
   {% endif %}
 
   <main id="contenido" class="{% if user.is_authenticated %}app-content{% else %}shell main-content{% endif %}" tabindex="-1">
+    {% if messages %}
+      <div class="flash-stack" aria-live="polite">
+        {% for message in messages %}<div class="alert alert-error">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 

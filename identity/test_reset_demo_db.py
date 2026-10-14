@@ -14,6 +14,7 @@ from cash.models import CashRegister, CashShift
 from catalog.models import Category, Product
 from identity.models import Account, Role
 from inventory.models import InitialInventoryLoad, Lot
+from sales.models import SaleDraft, SaleDraftLine
 from django.utils import timezone
 
 
@@ -78,11 +79,13 @@ class ResetDemoDbTests(TestCase):
             unit_cost=Decimal("1.0000"),
             expiration_date=timezone.localdate() + timedelta(days=30),
         )
-        CashShift.objects.create(
+        shift = CashShift.objects.create(
             cash_register=CashRegister.objects.get(code="CAJA-01"),
             seller=seller,
             opening_amount=Decimal("10.00"),
         )
+        draft = SaleDraft.objects.create(cash_shift=shift, seller=seller)
+        SaleDraftLine.objects.create(draft=draft, product=product, quantity=1, unit_price=Decimal("5.00"))
         self.assertEqual(Role.objects.count(), 4)
 
         output = StringIO()
@@ -96,6 +99,8 @@ class ResetDemoDbTests(TestCase):
         self.assertEqual(InitialInventoryLoad.objects.count(), 0)
         self.assertEqual(Lot.objects.count(), 0)
         self.assertEqual(CashShift.objects.count(), 0)
+        self.assertEqual(SaleDraft.objects.count(), 0)
+        self.assertEqual(SaleDraftLine.objects.count(), 0)
         self.assertFalse(Role.objects.filter(code="EXTRA").exists())
 
     @patch.dict("os.environ", _SEED_ENV, clear=False)

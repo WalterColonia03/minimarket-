@@ -39,6 +39,12 @@
         <p>Declara el dinero en efectivo disponible al comenzar tu turno.</p>
         <span class="card-link">Abrir turno <span aria-hidden="true">→</span></span>
       </a>
+      <a class="action-card action-card-live" href="{% url 'sales-draft' %}" data-testid="sales-draft-link">
+        <span class="card-icon card-icon-teal" aria-hidden="true">▦</span>
+        <h3>Preparar una venta</h3>
+        <p>Busca productos y revisa las existencias disponibles antes de cobrar.</p>
+        <span class="card-link">Preparar venta <span aria-hidden="true">→</span></span>
+      </a>
     {% endif %}
   </div>
 </section>

@@ -1,16 +1,18 @@
 # R1-PMV
 
-Monolito Django para el recorrido interno de una bodega. Este corte reproduce la capacidad planificada de la primera semana: autenticación y registro de producto están funcionales; carga inicial de inventario y apertura de caja quedan en validación; ventas, cobro, constancia, cierre y logout integrado con borradores permanecen para la segunda semana.
+Monolito Django para el recorrido interno de una bodega. El corte actual llega a la primera integración: autenticación, producto, carga inicial, apertura de caja y preparación de venta. El cobro, la constancia y el cierre de caja permanecen fuera de este corte.
 
 ## Alcance de este corte
 
 | Historia | Estado local | Resultado disponible |
 |---|---|---|
 | `HU-AUTH-01` | Lista para revisión externa | Login seguro, sesión rotada, navegación y autorización por rol |
+| `HU-AUTH-03` | En verificación | Salida confirmada; descarta el borrador activo sin cerrar el turno ni alterar existencias |
 | `HU-PROD-02` | Lista para revisión externa | Alta de producto enlatado, validaciones, stock cero y permisos |
 | `HU-INV-01a` | En revisión técnica | Carga multilot atómica, costo promedio y pruebas locales; falta carrera PostgreSQL/revisión |
 | `HU-CAJA-01` | En progreso | Apertura ligada al vendedor y restricción de turno abierto; falta carrera PostgreSQL/revisión |
-| `HU-AUTH-03`, `HU-VEN-01b`, `HU-VEN-01c`, `HU-VEN-02a`, `HU-CAJA-02` | Pendiente · semana 2 | No se simula funcionalidad fuera del corte |
+| `HU-VEN-01b` | En verificación | Búsqueda por nombre o código, borrador, stock vendible, cantidades y totales sin descuento de existencias |
+| `HU-VEN-01c`, `HU-VEN-02a`, `HU-CAJA-02` | Pendiente | Cobro, constancia y cierre aún no están disponibles |
 
 Los estados son evidencia local; este repositorio no modifica por sí mismo Jira ni el remoto de GitHub.
 
@@ -48,7 +50,7 @@ Las cuentas ficticias son `admin.demo@pmv.invalid`, `almacen.demo@pmv.invalid`, 
 - `/productos/nuevo/`: registro exclusivo de `ADMIN`.
 - `/inventario/carga-inicial/`: carga exclusiva de `ALMACENERO`.
 - `/caja/abrir/`: apertura exclusiva de `VENDEDOR`.
-- `/ventas/`: aviso de alcance pendiente; no implementa venta.
+- `/ventas/`: preparación exclusiva de `VENDEDOR`; no cobra ni descuenta existencias.
 
 ## Verificación
 

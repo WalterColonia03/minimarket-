@@ -117,6 +117,7 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.client.force_login(self.seller)
         response = self.client.get(reverse("dashboard"))
         self.assertContains(response, "Abrir turno")
+        self.assertContains(response, "Preparar venta")
         self.assertNotContains(response, "Registrar producto")
         self.assertNotContains(response, "Carga inicial")
 
@@ -134,7 +135,10 @@ class AuthenticationAndAuthorizationTests(TestCase):
 
                 self.assertContains(response, operation_label)
                 self.assertContains(response, f'href="{reverse(route_name)}"')
-                self.assertNotContains(response, f'href="{reverse("sales-counter")}"')
+                if account.role.code == Role.Code.SELLER:
+                    self.assertContains(response, f'href="{reverse("sales-draft")}"')
+                else:
+                    self.assertNotContains(response, f'href="{reverse("sales-draft")}"')
                 for unavailable_label in unavailable_labels:
                     self.assertNotContains(response, unavailable_label)
 
@@ -148,12 +152,12 @@ class AuthenticationAndAuthorizationTests(TestCase):
             with self.subTest(internal_label=internal_label):
                 self.assertNotContains(response, internal_label)
 
-    def test_unavailable_sales_page_does_not_expose_planning_identifiers(self) -> None:
+    def test_sales_preparation_page_does_not_expose_planning_identifiers(self) -> None:
         self.client.force_login(self.seller)
 
-        response = self.client.get(reverse("sales-counter"))
+        response = self.client.get(reverse("sales-draft"))
 
-        self.assertContains(response, "La preparación y el cobro de ventas aún no están disponibles.")
+        self.assertContains(response, "Abre tu turno para preparar una venta")
         for internal_label in ("HU-", "SCRUM", "Sprint", "PostgreSQL", "segunda semana"):
             with self.subTest(internal_label=internal_label):
                 self.assertNotContains(response, internal_label)
@@ -188,10 +192,16 @@ class AuthenticationAndAuthorizationTests(TestCase):
                     response = self.client.get(reverse(route_name))
                     self.assertEqual(response.status_code, 200 if current_role == allowed_role else 403)
 
+        for current_role, account in users.items():
+            with self.subTest(route="sales-draft", current_role=current_role):
+                self.client.force_login(account)
+                response = self.client.get(reverse("sales-draft"))
+                self.assertEqual(response.status_code, 200 if current_role == Role.Code.SELLER else 403)
+
     def test_post_logout_invalidates_session_and_back_route_requires_login(self) -> None:
         self.client.force_login(self.seller)
         response = self.client.post(reverse("logout"))
         self.assertRedirects(response, reverse("login"))
         self.assertNotIn("_auth_user_id", self.client.session)
-        response = self.client.get(reverse("sales-counter"))
+        response = self.client.get(reverse("sales-draft"))
         self.assertEqual(response.status_code, 302)

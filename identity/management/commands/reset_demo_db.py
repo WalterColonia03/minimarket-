@@ -21,6 +21,7 @@ from cash.models import CashRegister, CashShift
 from catalog.models import Category, Product
 from identity.models import Account, Role
 from inventory.models import InitialInventoryLoad, Lot
+from sales.models import SaleDraft, SaleDraftLine
 
 
 _ALLOWED_ENVS = {"local", "demo"}
@@ -59,6 +60,8 @@ class Command(BaseCommand):
         with transaction.atomic():
             # Delete in FK-safe order: dependents first.
             Session.objects.all().delete()
+            SaleDraftLine.objects.all().delete()
+            SaleDraft.objects.all().delete()
             Lot.objects.all().delete()
             InitialInventoryLoad.objects.all().delete()
             CashShift.objects.all().delete()
@@ -78,6 +81,8 @@ class Command(BaseCommand):
                 "lots": Lot.objects.count(),
                 "cash_registers": CashRegister.objects.count(),
                 "cash_shifts": CashShift.objects.count(),
+                "sale_drafts": SaleDraft.objects.count(),
+                "sale_draft_lines": SaleDraftLine.objects.count(),
             }
             non_zero = {k: v for k, v in counts.items() if v != 0}
             if non_zero:
