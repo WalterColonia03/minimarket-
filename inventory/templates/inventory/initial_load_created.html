@@ -17,7 +17,7 @@
     <div><dt>Responsable</dt><dd>{{ load.responsible.display_name }}</dd></div>
     <div><dt>Confirmada</dt><dd>{{ load.confirmed_at|date:"d/m/Y H:i" }}</dd></div>
     <div><dt>Existencias físicas</dt><dd>{{ load.product.physical_stock }} UND</dd></div>
-    <div><dt>Costo promedio</dt><dd>S/ {{ load.product.average_cost|floatformat:4 }}</dd></div>
+    <div><dt>Costo promedio</dt><dd>S/ {{ load.product.average_cost|floatformat:2 }}</dd></div>
   </dl>
 
   <div class="table-wrap">

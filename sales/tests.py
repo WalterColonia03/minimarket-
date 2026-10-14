@@ -198,6 +198,7 @@ class SalePreparationTests(TestCase):
         self.assertContains(confirmation, "La venta en preparación se descartará")
         self.assertRedirects(response, reverse("login"))
         self.assertEqual(draft.status, SaleDraft.Status.DISCARDED)
+        self.assertFalse(SaleDraftLine.objects.filter(draft=draft).exists())
         self.assertEqual(shift.status, CashShift.Status.OPEN)
         self.assertEqual(list(Lot.objects.values_list("id", "available_quantity")), before_quantities)
         self.assertNotIn("_auth_user_id", self.client.session)

@@ -177,6 +177,7 @@ def discard_active_draft(*, actor: Account) -> bool:
     )
     if draft is None:
         return False
+    SaleDraftLine.objects.filter(draft=draft).delete()
     draft.status = SaleDraft.Status.DISCARDED
     draft.discarded_at = timezone.now()
     draft.save(update_fields=("status", "discarded_at", "updated_at"))

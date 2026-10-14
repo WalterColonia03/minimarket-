@@ -70,6 +70,7 @@ class InitialInventoryLoadTests(TestCase):
 
         load = InitialInventoryLoad.objects.get()
         self.assertRedirects(response, reverse("inventory-load-created", args=(load.pk,)))
+        confirmation = self.client.get(reverse("inventory-load-created", args=(load.pk,)))
         self.assertEqual(load.responsible, self.warehouse)
         self.assertEqual(Lot.objects.count(), 2)
         self.assertEqual(
@@ -83,6 +84,8 @@ class InitialInventoryLoadTests(TestCase):
         self.assertEqual(self.product.physical_stock, 5)
         self.assertEqual(self.product.average_cost, Decimal("1.6000"))
         self.assertTrue(self.product.is_sellable)
+        self.assertContains(confirmation, "S/ 1,60")
+        self.assertNotContains(confirmation, "S/ 1,6000")
 
     def test_invalid_middle_lot_rolls_back_entire_load(self) -> None:
         self.client.force_login(self.warehouse)
