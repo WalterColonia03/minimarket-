@@ -5,9 +5,9 @@
 {% block content %}
 <section class="page-heading">
   <div>
-    <p class="eyebrow">Ventas y caja</p>
+    <p class="eyebrow">Apertura de caja</p>
     <h2>Apertura de caja</h2>
-    <p class="lede">Declara el efectivo inicial de la caja única antes de iniciar ventas.</p>
+    <p class="lede">Declara el efectivo inicial de la caja única para abrir tu turno.</p>
   </div>
   <a class="button button-secondary" href="{% url 'dashboard' %}">Volver al inicio</a>
 </section>
@@ -25,7 +25,7 @@
       <a class="button button-primary" href="{% url 'cash-shift-opened' current_shift.pk %}">Ver mi turno</a>
     {% else %}
       <h3>La caja ya está en uso</h3>
-      <p>Solo puede existir un turno abierto. Cuando el turno actual se cierre, podrás iniciar uno nuevo.</p>
+      <p>Solo puede existir un turno abierto al mismo tiempo.</p>
     {% endif %}
   </section>
 {% else %}

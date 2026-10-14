@@ -120,6 +120,24 @@ class AuthenticationAndAuthorizationTests(TestCase):
         self.assertNotContains(response, "Registrar producto")
         self.assertNotContains(response, "Carga inicial")
 
+    def test_sidebar_limits_each_role_to_its_current_operation(self) -> None:
+        cases = (
+            (self.admin, "Registrar producto", "product-entry", ("Existencias iniciales", "Apertura de caja")),
+            (self.warehouse, "Existencias iniciales", "inventory-load", ("Registrar producto", "Apertura de caja")),
+            (self.seller, "Apertura de caja", "cash-open", ("Registrar producto", "Existencias iniciales")),
+        )
+
+        for account, operation_label, route_name, unavailable_labels in cases:
+            with self.subTest(role=account.role.code):
+                self.client.force_login(account)
+                response = self.client.get(reverse("dashboard"))
+
+                self.assertContains(response, operation_label)
+                self.assertContains(response, f'href="{reverse(route_name)}"')
+                self.assertNotContains(response, f'href="{reverse("sales-counter")}"')
+                for unavailable_label in unavailable_labels:
+                    self.assertNotContains(response, unavailable_label)
+
     def test_dashboard_does_not_expose_planning_identifiers(self) -> None:
         self.client.force_login(self.admin)
 

@@ -26,17 +26,17 @@
           </a>
           {% if user.role.code == 'ADMIN' %}
             <a class="nav-item{% if request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %} is-active{% endif %}" href="{% url 'product-entry' %}">
-              <span class="nav-icon" aria-hidden="true">&#9638;</span><span>Productos</span>
+              <span class="nav-icon" aria-hidden="true">&#9638;</span><span>Registrar producto</span>
             </a>
           {% endif %}
           {% if user.role.code == 'ALMACENERO' %}
             <a class="nav-item{% if request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %} is-active{% endif %}" href="{% url 'inventory-load' %}">
-              <span class="nav-icon" aria-hidden="true">&#9707;</span><span>Inventario</span>
+              <span class="nav-icon" aria-hidden="true">&#9707;</span><span>Existencias iniciales</span>
             </a>
           {% endif %}
           {% if user.role.code == 'VENDEDOR' %}
             <a class="nav-item{% if request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %} is-active{% endif %}" href="{% url 'cash-open' %}">
-              <span class="nav-icon" aria-hidden="true">$</span><span>Mi caja</span>
+              <span class="nav-icon" aria-hidden="true">$</span><span>Apertura de caja</span>
             </a>
           {% endif %}
         </nav>
@@ -56,9 +56,9 @@
             <p class="topbar-kicker">Minimarket</p>
             <h1>
               {% if request.resolver_match.url_name == 'dashboard' %}Inicio
-              {% elif request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %}Productos
-              {% elif request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %}Inventario
-              {% elif request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %}Mi caja
+              {% elif request.resolver_match.url_name == 'product-entry' or request.resolver_match.url_name == 'product-created' %}Registrar producto
+              {% elif request.resolver_match.url_name == 'inventory-load' or request.resolver_match.url_name == 'inventory-load-created' %}Existencias iniciales
+              {% elif request.resolver_match.url_name == 'cash-open' or request.resolver_match.url_name == 'cash-shift-opened' %}Apertura de caja
               {% elif request.resolver_match.url_name == 'sales-counter' %}Ventas
               {% elif request.resolver_match.url_name == 'logout' %}Cerrar sesi&oacute;n
               {% else %}Minimarket{% endif %}
